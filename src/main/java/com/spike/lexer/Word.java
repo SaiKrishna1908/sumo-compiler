@@ -4,9 +4,11 @@ public class Word extends Token {
 
     public final String lexeme;
 
-    // Tag -> NUM, ID, TRUE, FALSE
-    // lexeme -> identifier
-    public Word(Tag tag,String word) {
+    /*
+         Tag -> NUM, ID, TRUE, FALSE
+         lexeme -> identifier
+     */
+    public Word(Tag tag, String word) {
         super(tag);
         this.lexeme = word;
     }

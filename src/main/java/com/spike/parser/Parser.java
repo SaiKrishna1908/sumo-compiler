@@ -5,14 +5,14 @@ import java.util.Scanner;
 
 /*
  * A simple parser
- * 
+ *
  * Schema
- * 
+ *
  * expr -> term rest
  * rest -> + term {print('+')} rest
  *      |  - term {print('-')} rest
  *      |  none
- * 
+ *
  * term -> 0 {print('0')}
  *      |  1 {print('1')}
  *      |  2 {print('2')}
@@ -26,18 +26,18 @@ public class Parser {
     Scanner scan;
 
     public Parser() throws IOException {
-        scan  = new Scanner(System.in);
+        scan = new Scanner(System.in);
         lookahead = scan.nextInt();
     }
 
     public void expr() throws IOException {
         term();
-        while(true) {
+        while (true) {
             System.out.println(((char) lookahead));
-            if (lookahead ==  '+') {
-               match('+');
-               term();
-               System.out.println("+"); 
+            if (lookahead == '+') {
+                match('+');
+                term();
+                System.out.println("+");
             } else if (lookahead == '-') {
                 match('-');
                 term();
@@ -52,13 +52,11 @@ public class Parser {
         if (Character.isDigit((char) lookahead)) {
             System.out.println((char) lookahead);
             match(lookahead);
-        }
-
-        else throw new Error("Syntax error");
+        } else throw new Error("Syntax error");
     }
 
     void match(int t) throws IOException {
         if (lookahead == t) lookahead = scan.nextInt();
         else throw new Error("Syntax Error");
-    }    
+    }
 }

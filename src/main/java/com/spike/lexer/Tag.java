@@ -16,6 +16,8 @@ public enum Tag {
     FALSE,
 
     REL_OP,
+
+    BAD_TOKEN,
     OTHER
 
 }

@@ -7,12 +7,8 @@ package com.spike.lexer;
 public class Token {
     public final Tag tag;
 
-    public 	Token(Tag tag) {
+    public Token(Tag tag) {
         this.tag = tag;
-    }
-
-    public Token(int ascii) {
-        this.tag = Tag.OTHER;
     }
 
     public Token(String token) {
