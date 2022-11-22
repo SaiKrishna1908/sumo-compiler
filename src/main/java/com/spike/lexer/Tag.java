@@ -10,16 +10,28 @@ package com.spike.lexer;
  */
 public enum Tag {
 
+    // Numbers from 0 to 9
     NUM,
+
+    // Identifiers  (possibly string literals ?)
     ID,
+
+    // Boolean True
     TRUE,
+
+    // Boolean False
     FALSE,
 
+    // <= , >=, ==, !=
     REL_OP,
 
+    // Some bad token
     BAD_TOKEN,
     OTHER,
 
-    EOF
+    // EOF Token, maybe can be useful in future.
+    EOF,
 
+    // Binary Operator (PLUE, MINUS)
+    BINARY_OP
 }

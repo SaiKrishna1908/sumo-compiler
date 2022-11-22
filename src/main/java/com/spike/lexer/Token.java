@@ -10,8 +10,9 @@ public class Token {
     public Token(Tag tag) {
         this.tag = tag;
     }
-
-    public Token(String token) {
-        this.tag = Tag.OTHER;
+    
+    @Override
+    public String toString() {
+        return "Tag: "+tag.name();
     }
 }

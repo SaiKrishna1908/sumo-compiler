@@ -12,4 +12,9 @@ public class Word extends Token {
         super(tag);
         this.lexeme = word;
     }
+
+    @Override
+    public String toString() {
+        return "Tag: "+ super.tag+" Lexeme: "+ lexeme;
+    }
 }

@@ -13,7 +13,6 @@ public class LexerTest {
         try {
             String data = "\n\n\n";
             Lexer lexer = new Lexer(data);
-            System.setIn(new ByteArrayInputStream(data.getBytes()));
             lexer.scan();
             assert lexer.line == 4;
         } catch (IOException e) {
@@ -27,7 +26,6 @@ public class LexerTest {
         try {
             String data = "some string I say";
             Lexer lexer = new Lexer(data);
-            System.setIn(new ByteArrayInputStream(data.getBytes()));
             lexer.scan();
             assert lexer.wordHashtable.containsKey("some");
             lexer.scan();
@@ -73,6 +71,35 @@ public class LexerTest {
             word = (Word) lexer.scan();
             assert word.lexeme.equals("!=");
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void test_lexer_binary_operator() {
+        try {
+            String data = "+";
+
+            Lexer lexer = new Lexer(data);
+            Word word = (Word) lexer.scan();
+
+            assert word.tag == Tag.BINARY_OP;
+            assert word.lexeme.equals("+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test()
+    public void test_lexer_expression_tokenization() {
+        try {
+            String data = "3  +  4";
+            Lexer lexer = new Lexer(data);
+            Token currentToken;
+            while ((currentToken = lexer.scan()).tag != Tag.EOF) {
+                System.out.println(currentToken);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

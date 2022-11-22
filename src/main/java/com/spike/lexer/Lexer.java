@@ -47,7 +47,7 @@ public class Lexer {
     public Token scan() throws IOException {
         final char[] charArray = sentence.toCharArray();
 
-        for (; currentPosition < charArray.length; ) {
+        while (currentPosition < charArray.length) {
             peek = charArray[currentPosition];
             if (peek == ' ' || peek == '\t') {
                 currentPosition++;
@@ -98,7 +98,11 @@ public class Lexer {
                     return new Word(Tag.REL_OP, stringBuilder.toString());
                 }
                 return new Word(Tag.OTHER, stringBuilder.toString());
+            } else if (peek == '+' || peek == '-' || peek == '*' || peek == '/') {
+                currentPosition++;
+                return new Word(Tag.BINARY_OP, String.valueOf(peek));
             } else {
+                currentPosition++;
                 Token t = new Token(Tag.BAD_TOKEN);
                 peek = ' ';
                 return t;
