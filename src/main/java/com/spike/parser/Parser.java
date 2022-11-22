@@ -25,7 +25,7 @@ public class Parser {
     static int lookahead;
     Scanner scan;
 
-    public Parser() throws IOException {
+    public Parser() {
         scan = new Scanner(System.in);
         lookahead = scan.nextInt();
     }
@@ -48,14 +48,14 @@ public class Parser {
         }
     }
 
-    void term() throws IOException {
+    void term() {
         if (Character.isDigit((char) lookahead)) {
             System.out.println((char) lookahead);
             match(lookahead);
         } else throw new Error("Syntax error");
     }
 
-    void match(int t) throws IOException {
+    void match(int t) {
         if (lookahead == t) lookahead = scan.nextInt();
         else throw new Error("Syntax Error");
     }

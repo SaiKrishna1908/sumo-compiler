@@ -18,6 +18,8 @@ public enum Tag {
     REL_OP,
 
     BAD_TOKEN,
-    OTHER
+    OTHER,
+
+    EOF
 
 }
