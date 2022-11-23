@@ -1,7 +1,13 @@
 package com.spike.parser;
 
 import java.io.IOException;
-import java.util.Scanner;
+
+import com.spike.exceptions.ReadException;
+import com.spike.lexer.Lexer;
+import com.spike.lexer.Num;
+import com.spike.lexer.Tag;
+import com.spike.lexer.Token;
+import com.spike.lexer.Word;
 
 /*
  * A simple parser
@@ -20,43 +26,64 @@ import java.util.Scanner;
  *      |  4 {print('4')}
  *      ...
  *      |  9 {print('9')}
+ *
+ * Output of the parser
+ *
+ *
+ *  parser outputs a tree, whose nodes contain a non-terminal,
+ *  and leaves contain a terminal.
+ *
+ *      +
+ *     / \
+ *    1   3
  */
 public class Parser {
-    static int lookahead;
-    Scanner scan;
+    Token lookahead;
 
-    public Parser() {
-        scan = new Scanner(System.in);
-        lookahead = scan.nextInt();
+    // Lexer will keep outputing a token, when scan method is called
+    Lexer lexer;
+
+    public Parser(Lexer lexer) {
+        this.lexer = lexer;
+        this.lookahead = lexer.scan();
     }
 
-    public void expr() throws IOException {
+    public void expr() {
         term();
         while (true) {
-            System.out.println(((char) lookahead));
-            if (lookahead == '+') {
-                match('+');
-                term();
-                System.out.println("+");
-            } else if (lookahead == '-') {
-                match('-');
-                term();
-                System.out.println('-');
-            } else {
-                return;
+            if (lookahead instanceof Word) {
+                Word currentWord = (Word) lookahead;
+
+                if (currentWord.lexeme.equals("+")) {
+                    match(currentWord);
+                    term();
+                    System.out.println("+");
+                } else if (currentWord.lexeme.equals("-")) {
+                    match(currentWord);
+                    term();
+                    System.out.println('-');
+                } else {
+                    throw new ReadException(String.format("Unexpected binary operator %s", currentWord.lexeme));
+                }
+            } else if (lookahead.tag == Tag.EOF) {
+                break;
+            } else  {
+                System.out.println("Error while parsing string, unexpected token");
             }
         }
     }
 
     void term() {
-        if (Character.isDigit((char) lookahead)) {
-            System.out.println((char) lookahead);
+        if (lookahead.tag == Tag.NUM) {
+            System.out.println(((Num) lookahead).value);
             match(lookahead);
-        } else throw new Error("Syntax error");
+        } else
+            throw new Error("Syntax error");
     }
 
-    void match(int t) {
-        if (lookahead == t) lookahead = scan.nextInt();
-        else throw new Error("Syntax Error");
+    void match(Token token) {
+        if (lookahead.tag == token.tag) {
+            lookahead = lexer.scan();
+        }
     }
 }

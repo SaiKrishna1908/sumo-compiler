@@ -27,6 +27,8 @@ public enum Tag {
 
     // Some bad token
     BAD_TOKEN,
+
+    // Remove this to use BAD_TOKEN
     OTHER,
 
     // EOF Token, maybe can be useful in future.

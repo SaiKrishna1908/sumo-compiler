@@ -1,8 +1,5 @@
 package com.spike.lexer;
 
-import com.spike.exceptions.ReadException;
-
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -16,7 +13,7 @@ public class Lexer {
 
     private int currentPosition = 0;
 
-    private String sentence;
+    private final String sentence;
 
     Hashtable<String, Word> wordHashtable = new Hashtable<>();
 
@@ -36,7 +33,7 @@ public class Lexer {
 
 
     private char readNextCharacter(String sentence, int idx) {
-        char charArray[] = sentence.toCharArray();
+        char[] charArray = sentence.toCharArray();
         if (idx <= charArray.length - 1) {
             return charArray[idx];
         }
@@ -44,7 +41,7 @@ public class Lexer {
         return '\0';
     }
 
-    public Token scan() throws IOException {
+    public Token scan() {
         final char[] charArray = sentence.toCharArray();
 
         while (currentPosition < charArray.length) {
