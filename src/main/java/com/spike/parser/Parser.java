@@ -68,16 +68,20 @@ public class Parser {
                     System.out.println(binaryExpression.evaluate());
 
                 } else if (currentWord.lexeme.equals("-")) {
+                    Word word = new Word(Tag.BINARY_OP, "-");
                     match(Tag.BINARY_OP);
-                    term();
-                    System.out.println('-');
+
+                    Expression right = term();
+
+                    BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
+                    System.out.println(binaryExpression.evaluate());
                 } else {
                     throw new UnSupportedOperatorException(String.format("Unexpected binary operator %s", currentWord.lexeme));
                 }
             } else if (lookahead.tag == Tag.EOF) {
                 break;
             } else  {
-                throw new InvalidExpression(String.format("Invalid expression, expected binary operator"));
+                throw new InvalidExpression("Invalid expression, expected binary operator");
             }
         }
     }
