@@ -82,6 +82,8 @@ public class Lexer {
 
                 wordHashtable.put(wordString, hashTableWord);
 
+                return new Word(Tag.OTHER,stringBuilder.toString());
+
             } else if (peek == '<' || peek == '=' || peek == '!' || peek == '>') {
                 StringBuilder stringBuilder = new StringBuilder();
 

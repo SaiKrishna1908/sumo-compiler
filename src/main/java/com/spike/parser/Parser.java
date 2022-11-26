@@ -1,13 +1,16 @@
 package com.spike.parser;
 
-import java.io.IOException;
-
+import com.spike.exceptions.InvalidExpression;
 import com.spike.exceptions.ReadException;
+import com.spike.exceptions.UnSupportedOperatorException;
 import com.spike.lexer.Lexer;
 import com.spike.lexer.Num;
 import com.spike.lexer.Tag;
 import com.spike.lexer.Token;
 import com.spike.lexer.Word;
+import com.spike.parser.expressions.BinaryExpression;
+import com.spike.parser.expressions.Expression;
+import com.spike.parser.expressions.NumberExpression;
 
 /*
  * A simple parser
@@ -48,41 +51,48 @@ public class Parser {
         this.lookahead = lexer.scan();
     }
 
-    public void expr() {
-        term();
+    public void parse() throws UnSupportedOperatorException, InvalidExpression {
+
+        Expression left = term();
+
         while (true) {
             if (lookahead instanceof Word) {
                 Word currentWord = (Word) lookahead;
 
                 if (currentWord.lexeme.equals("+")) {
-                    match(currentWord);
-                    term();
-                    System.out.println("+");
+                    Word word = new Word(Tag.BINARY_OP, "+");
+                    match(Tag.BINARY_OP);
+                    Expression right = term();
+
+                    BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
+                    System.out.println(binaryExpression.evaluate());
+
                 } else if (currentWord.lexeme.equals("-")) {
-                    match(currentWord);
+                    match(Tag.BINARY_OP);
                     term();
                     System.out.println('-');
                 } else {
-                    throw new ReadException(String.format("Unexpected binary operator %s", currentWord.lexeme));
+                    throw new UnSupportedOperatorException(String.format("Unexpected binary operator %s", currentWord.lexeme));
                 }
             } else if (lookahead.tag == Tag.EOF) {
                 break;
             } else  {
-                System.out.println("Error while parsing string, unexpected token");
+                throw new InvalidExpression(String.format("Invalid expression, expected binary operator"));
             }
         }
     }
 
-    void term() {
+    Expression term() {
         if (lookahead.tag == Tag.NUM) {
-            System.out.println(((Num) lookahead).value);
-            match(lookahead);
+            int value = ((Num) lookahead).value;
+            match(Tag.NUM);
+            return new NumberExpression(value);
         } else
             throw new Error("Syntax error");
     }
 
-    void match(Token token) {
-        if (lookahead.tag == token.tag) {
+    void match(Tag tag) {
+        if (lookahead.tag == tag) {
             lookahead = lexer.scan();
         }
     }

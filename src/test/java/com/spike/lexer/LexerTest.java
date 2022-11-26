@@ -75,4 +75,14 @@ public class LexerTest {
             System.out.println(currentToken);
         }
     }
+
+    @Test()
+    public void test_lexer_expression_with_letter_and_number() {
+        String data = "3 t 4";
+        Lexer lexer = new Lexer(data);
+        Token currentToken;
+        while ((currentToken = lexer.scan()).tag != Tag.EOF) {
+            System.out.println(currentToken);
+        }
+    }
 }

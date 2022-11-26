@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+import com.spike.exceptions.InvalidExpression;
+import com.spike.exceptions.UnSupportedOperatorException;
 import com.spike.lexer.Lexer;
 import com.spike.parser.Parser;
 
@@ -12,7 +14,7 @@ import com.spike.parser.Parser;
  * Hello world!
  */
 public class App {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, UnSupportedOperatorException, InvalidExpression {
         
         BufferedReader bin = new BufferedReader(new InputStreamReader(System.in));
 
@@ -20,15 +22,16 @@ public class App {
 
         Lexer lexer;
 
+        System.out.println(">>> Sumo Compiler <<<");
+        System.out.print("> ");
+        input = bin.readLine();
         do {
-
-            input = bin.readLine();
             lexer = new Lexer(input);
-            
-            
             Parser parser = new Parser(lexer);
-            parser.expr();
+            parser.parse();
 
-        } while (Objects.isNull(input) || input.isEmpty() || input.isBlank());
+            System.out.print("> ");
+            input = bin.readLine();
+        } while (!Objects.isNull(input) && !input.isEmpty() && !input.isBlank());
     }
 }
