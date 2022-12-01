@@ -4,15 +4,15 @@ package com.spike.lexer;
     A Num is child of Token
  */
 public class Num extends Token {
-    public final int value;
+    public final Integer value;
 
     public Num(int v) {
-        super(Tag.NUM);
+        super(Tag.NUM, v);
         value = v;
     }
 
     @Override
     public String toString() {
-        return "Tag: "+super.tag+" value: "+value;
+        return "Tag: "+super.getTag()+" value: "+value;
     }
 }

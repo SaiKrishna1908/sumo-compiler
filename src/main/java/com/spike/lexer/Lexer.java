@@ -102,13 +102,13 @@ public class Lexer {
                 return new Word(Tag.BINARY_OP, String.valueOf(peek));
             } else {
                 currentPosition++;
-                Token t = new Token(Tag.BAD_TOKEN);
+                Token t = new Token(Tag.BAD_TOKEN, "\0");
                 peek = ' ';
                 return t;
             }
         }
 
-        return new Token(Tag.EOF);
+        return new Token(Tag.EOF,"\0");
     }
 
     private boolean isPartRelOp(char c) {

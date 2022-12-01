@@ -45,7 +45,7 @@ public class LexerTest {
         Lexer lexer = new Lexer(data);
         Word word = (Word) lexer.scan();
         assert word != null;
-        assert word.tag == Tag.REL_OP;
+        assert word.getTag() == Tag.REL_OP;
         assert word.lexeme.equals(">=");
         word = (Word) lexer.scan();
         assert word.lexeme.equals("<=");
@@ -62,7 +62,7 @@ public class LexerTest {
         Lexer lexer = new Lexer(data);
         Word word = (Word) lexer.scan();
 
-        assert word.tag == Tag.BINARY_OP;
+        assert word.getTag() == Tag.BINARY_OP;
         assert word.lexeme.equals("+");
     }
 
@@ -71,7 +71,7 @@ public class LexerTest {
         String data = "3  +  4";
         Lexer lexer = new Lexer(data);
         Token currentToken;
-        while ((currentToken = lexer.scan()).tag != Tag.EOF) {
+        while ((currentToken = lexer.scan()).getTag() != Tag.EOF) {
             System.out.println(currentToken);
         }
     }
@@ -81,7 +81,7 @@ public class LexerTest {
         String data = "3 t 4";
         Lexer lexer = new Lexer(data);
         Token currentToken;
-        while ((currentToken = lexer.scan()).tag != Tag.EOF) {
+        while ((currentToken = lexer.scan()).getTag() != Tag.EOF) {
             System.out.println(currentToken);
         }
     }

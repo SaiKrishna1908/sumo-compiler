@@ -51,7 +51,10 @@ public class Parser {
         this.lookahead = lexer.scan();
     }
 
-    public void parse() throws UnSupportedOperatorException, InvalidExpression {
+    /*
+        Returning the root token node is optional and useful for printing the parsetree.
+     */
+    public TokenNode parse() throws UnSupportedOperatorException, InvalidExpression {
 
         Expression left = term();
 
@@ -66,7 +69,7 @@ public class Parser {
 
                     BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
                     System.out.println(binaryExpression.evaluate());
-
+                    return binaryExpression;
                 } else if (currentWord.lexeme.equals("-")) {
                     Word word = new Word(Tag.BINARY_OP, "-");
                     match(Tag.BINARY_OP);
@@ -75,19 +78,23 @@ public class Parser {
 
                     BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
                     System.out.println(binaryExpression.evaluate());
+
+                    return binaryExpression;
                 } else {
                     throw new UnSupportedOperatorException(String.format("Unexpected binary operator %s", currentWord.lexeme));
                 }
-            } else if (lookahead.tag == Tag.EOF) {
+            } else if (lookahead.getTag() == Tag.EOF) {
                 break;
             } else  {
                 throw new InvalidExpression("Invalid expression, expected binary operator");
             }
         }
+
+        return left;
     }
 
     Expression term() {
-        if (lookahead.tag == Tag.NUM) {
+        if (lookahead.getTag() == Tag.NUM) {
             int value = ((Num) lookahead).value;
             match(Tag.NUM);
             return new NumberExpression(value);
@@ -96,7 +103,7 @@ public class Parser {
     }
 
     void match(Tag tag) {
-        if (lookahead.tag == tag) {
+        if (lookahead.getTag() == tag) {
             lookahead = lexer.scan();
         }
     }

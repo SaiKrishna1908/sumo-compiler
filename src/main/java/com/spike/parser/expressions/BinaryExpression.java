@@ -4,6 +4,9 @@ import com.spike.exceptions.UnSupportedOperatorException;
 import com.spike.lexer.Tag;
 import com.spike.lexer.Token;
 import com.spike.lexer.Word;
+import com.spike.parser.TokenNode;
+
+import java.util.List;
 
 public class BinaryExpression extends Expression {
     private NumberExpression left;
@@ -16,9 +19,15 @@ public class BinaryExpression extends Expression {
         this.right = right;
     }
 
+
     @Override
-    public Tag getTag() {
-        return Tag.BINARY_EXPRESSION;
+    public Token getToken() {
+        return operator;
+    }
+
+    @Override
+    public List<TokenNode> getChildren() {
+        return List.of(left,right);
     }
 
     public int evaluate() throws UnSupportedOperatorException {

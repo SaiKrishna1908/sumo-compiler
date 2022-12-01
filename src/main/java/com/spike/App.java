@@ -9,6 +9,7 @@ import com.spike.exceptions.InvalidExpression;
 import com.spike.exceptions.UnSupportedOperatorException;
 import com.spike.lexer.Lexer;
 import com.spike.parser.Parser;
+import com.spike.parser.TokenNode;
 
 /**
  * Hello world!
@@ -16,22 +17,18 @@ import com.spike.parser.Parser;
 public class App {
     public static void main(String[] args) throws IOException, UnSupportedOperatorException, InvalidExpression {
         
-        BufferedReader bin = new BufferedReader(new InputStreamReader(System.in));
+    }
 
-        String input;
+    public static void prettyPrintParseTree(TokenNode root, int offset) {
+        String prefix = "\t".repeat(offset);
 
-        Lexer lexer;
+        if (offset == 1) {
+            System.out.println(root.getToken().getTag() + " ("+root.getToken().getValue()+") ");
+        }
 
-        System.out.println(">>> Sumo Compiler <<<");
-        System.out.print("> ");
-        input = bin.readLine();
-        do {
-            lexer = new Lexer(input);
-            Parser parser = new Parser(lexer);
-            parser.parse();
-
-            System.out.print("> ");
-            input = bin.readLine();
-        } while (!Objects.isNull(input) && !input.isEmpty() && !input.isBlank());
+        for(var child : root.getChildren()) {
+            System.out.println(prefix+"|---"+child.getToken().getTag()+" (" +child.getToken().getValue()+") ");
+            prettyPrintParseTree(child, offset+1);
+        }
     }
 }

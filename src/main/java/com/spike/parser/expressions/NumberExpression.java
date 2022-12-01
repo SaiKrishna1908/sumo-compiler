@@ -3,6 +3,9 @@ package com.spike.parser.expressions;
 import com.spike.lexer.Num;
 import com.spike.lexer.Tag;
 import com.spike.lexer.Token;
+import com.spike.parser.TokenNode;
+
+import java.util.List;
 
 public class NumberExpression extends Expression {
 
@@ -14,8 +17,13 @@ public class NumberExpression extends Expression {
     }
 
     @Override
-    public Tag getTag() {
-        return this.tag;
+    public Token getToken() {
+        return token;
+    }
+
+    @Override
+    public List<TokenNode> getChildren() {
+        return List.of();
     }
 
     protected int getValue() {

@@ -1,7 +1,10 @@
 package com.spike.parser;
 
-import com.spike.lexer.Tag;
+import com.spike.lexer.Token;
+
+import java.util.List;
 
 public abstract class TokenNode {
-    public abstract Tag getTag();
+    public abstract Token getToken();
+    public abstract List<TokenNode> getChildren();
 }
