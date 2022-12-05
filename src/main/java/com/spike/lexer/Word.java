@@ -9,7 +9,12 @@ public class Word extends Token {
          lexeme -> identifier
      */
     public Word(Tag tag, String word) {
-        super(tag);
+        super(tag, word);
         this.lexeme = word;
+    }
+
+    @Override
+    public String toString() {
+        return "Tag: "+ super.getTag()+" Lexeme: "+ lexeme;
     }
 }

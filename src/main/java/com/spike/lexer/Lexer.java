@@ -1,8 +1,5 @@
 package com.spike.lexer;
 
-import com.spike.exceptions.ReadException;
-
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -12,7 +9,10 @@ import java.util.List;
  */
 public class Lexer {
     public int line = 1;
-    private char peek = ' ';
+
+    private int currentPosition = 0;
+
+    private final String sentence;
 
     Hashtable<String, Word> wordHashtable = new Hashtable<>();
 
@@ -24,40 +24,50 @@ public class Lexer {
     /*
       Initialize lexer with reserved keywords
      */
-    public Lexer() {
+    public Lexer(String sentence) {
+        this.sentence = sentence;
         reserveKeywords(new Word(Tag.TRUE, "true"));
         reserveKeywords(new Word(Tag.FALSE, "false"));
     }
 
-    private char readChar() {
-        try {
-            return (char) System.in.read();
-        } catch (IOException e) {
-            throw new ReadException("Error reading a symbol from input stream");
+
+    private char readNextCharacter(String sentence, int idx) {
+        char[] charArray = sentence.toCharArray();
+        if (idx <= charArray.length - 1) {
+            return charArray[idx];
         }
+
+        return '\0';
     }
 
+    public Token scan() {
+        final char[] charArray = sentence.toCharArray();
 
-    public Token scan() throws IOException {
-        for (; ; peek = (char) System.in.read()) {
+        while (currentPosition < charArray.length) {
+            char peek = charArray[currentPosition];
             if (peek == ' ' || peek == '\t') {
-                continue;
-            } else if (peek == '\n' || isComment()) {
+                currentPosition++;
+            } else if (peek == '\n') {
+
+                currentPosition++;
                 line++;
+
             } else if (Character.isDigit(peek)) {
                 int val = 0;
                 do {
                     val = 10 * val + Character.getNumericValue(peek);
-                    peek = (char) System.in.read();
-                } while (Character.isDigit(peek));
+                    currentPosition++;
+                    peek = readNextCharacter(sentence, currentPosition);
+                } while (peek != '\0' && Character.isDigit(peek));
 
                 return new Num(val);
             } else if (Character.isLetter(peek)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 do {
                     stringBuilder.append(peek);
-                    peek = (char) System.in.read();
-                } while (Character.isAlphabetic(peek));
+                    currentPosition++;
+                    peek = readNextCharacter(sentence, currentPosition);
+                } while (peek != '\0' && Character.isAlphabetic(peek));
 
                 String wordString = stringBuilder.toString();
 
@@ -72,36 +82,35 @@ public class Lexer {
                 wordHashtable.put(wordString, hashTableWord);
 
                 return hashTableWord;
+
             } else if (peek == '<' || peek == '=' || peek == '!' || peek == '>') {
                 StringBuilder stringBuilder = new StringBuilder();
 
                 do {
                     stringBuilder.append(peek);
-                    peek = readChar();
+                    currentPosition++;
+                    peek = readNextCharacter(sentence, currentPosition);
                 } while (isPartRelOp(peek));
 
                 if (List.of("<=", ">=", "<", ">", "==", "!=").contains(stringBuilder.toString())) {
                     return new Word(Tag.REL_OP, stringBuilder.toString());
                 }
-                return new Word(Tag.OTHER, stringBuilder.toString());
+                return new Word(Tag.BAD_TOKEN, stringBuilder.toString());
+            } else if (peek == '+' || peek == '-' || peek == '*' || peek == '/') {
+                currentPosition++;
+                return new Word(Tag.BINARY_OP, String.valueOf(peek));
             } else {
-                Token t = new Token(Tag.BAD_TOKEN);
+                currentPosition++;
+                Token t = new Token(Tag.BAD_TOKEN, "\0");
                 peek = ' ';
-                return t;
+//                return t;
             }
         }
+
+        return new Word(Tag.EOF,"\0");
     }
 
     private boolean isPartRelOp(char c) {
         return List.of('>', '<', '!', '=').contains(c);
-    }
-
-    private boolean isComment() {
-        if (peek == '/') {
-            peek = readChar();
-            return peek == '/';
-        }
-
-        return false;
     }
 }
