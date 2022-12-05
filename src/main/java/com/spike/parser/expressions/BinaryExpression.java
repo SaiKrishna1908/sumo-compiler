@@ -9,11 +9,11 @@ import com.spike.parser.TokenNode;
 import java.util.List;
 
 public class BinaryExpression extends Expression {
-    private NumberExpression left;
-    private Token operator;
-    private NumberExpression right;
+    private final Expression left;
+    private final Token operator;
+    private final Expression right;
 
-    public BinaryExpression(NumberExpression left, Token operator, NumberExpression right) {
+    public BinaryExpression(Expression left, Token operator, Expression right) {
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -30,14 +30,17 @@ public class BinaryExpression extends Expression {
         return List.of(left,right);
     }
 
-    public int evaluate() throws UnSupportedOperatorException {
-        int leftValue = left.getValue();
-        int rightValue  = right.getValue();
+    @Override
+    public Integer evaluate() throws UnSupportedOperatorException {
+        Integer leftValue = (Integer) left.evaluate();
+        Integer rightValue  = (Integer) right.evaluate();
 
         String operator = ((Word) this.operator).lexeme;
         switch (operator) {
             case "+": return leftValue + rightValue;
             case "-": return leftValue - rightValue;
+            case "*": return leftValue * rightValue;
+            case "/": return leftValue / rightValue;
         }
 
         throw new UnSupportedOperatorException(String.format("Unknown operator %s", operator));

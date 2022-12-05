@@ -9,7 +9,6 @@ import java.util.List;
  */
 public class Lexer {
     public int line = 1;
-    private char peek = ' ';
 
     private int currentPosition = 0;
 
@@ -45,7 +44,7 @@ public class Lexer {
         final char[] charArray = sentence.toCharArray();
 
         while (currentPosition < charArray.length) {
-            peek = charArray[currentPosition];
+            char peek = charArray[currentPosition];
             if (peek == ' ' || peek == '\t') {
                 currentPosition++;
             } else if (peek == '\n') {
@@ -82,7 +81,7 @@ public class Lexer {
 
                 wordHashtable.put(wordString, hashTableWord);
 
-                return new Word(Tag.OTHER,stringBuilder.toString());
+                return hashTableWord;
 
             } else if (peek == '<' || peek == '=' || peek == '!' || peek == '>') {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -96,7 +95,7 @@ public class Lexer {
                 if (List.of("<=", ">=", "<", ">", "==", "!=").contains(stringBuilder.toString())) {
                     return new Word(Tag.REL_OP, stringBuilder.toString());
                 }
-                return new Word(Tag.OTHER, stringBuilder.toString());
+                return new Word(Tag.BAD_TOKEN, stringBuilder.toString());
             } else if (peek == '+' || peek == '-' || peek == '*' || peek == '/') {
                 currentPosition++;
                 return new Word(Tag.BINARY_OP, String.valueOf(peek));
@@ -104,11 +103,11 @@ public class Lexer {
                 currentPosition++;
                 Token t = new Token(Tag.BAD_TOKEN, "\0");
                 peek = ' ';
-                return t;
+//                return t;
             }
         }
 
-        return new Token(Tag.EOF,"\0");
+        return new Word(Tag.EOF,"\0");
     }
 
     private boolean isPartRelOp(char c) {

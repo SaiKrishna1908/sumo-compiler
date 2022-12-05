@@ -12,6 +12,8 @@ import com.spike.parser.expressions.BinaryExpression;
 import com.spike.parser.expressions.Expression;
 import com.spike.parser.expressions.NumberExpression;
 
+import java.util.List;
+
 /*
  * A simple parser
  *
@@ -46,6 +48,9 @@ public class Parser {
     // Lexer will keep outputing a token, when scan method is called
     Lexer lexer;
 
+    /*
+        Read the first token
+     */
     public Parser(Lexer lexer) {
         this.lexer = lexer;
         this.lookahead = lexer.scan();
@@ -56,44 +61,43 @@ public class Parser {
      */
     public TokenNode parse() throws UnSupportedOperatorException, InvalidExpression {
 
-        Expression left = term();
+        return term();
+    }
 
-        while (true) {
-            if (lookahead instanceof Word) {
-                Word currentWord = (Word) lookahead;
+    Expression term() throws UnSupportedOperatorException {
+        var left = factor();
+        Word currentWord = (Word) lookahead;
+        while (currentWord.lexeme.equals("+")  || currentWord.lexeme.equals("-")) {
 
-                if (currentWord.lexeme.equals("+")) {
-                    Word word = new Word(Tag.BINARY_OP, "+");
-                    match(Tag.BINARY_OP);
-                    Expression right = term();
 
-                    BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
-                    System.out.println(binaryExpression.evaluate());
-                    return binaryExpression;
-                } else if (currentWord.lexeme.equals("-")) {
-                    Word word = new Word(Tag.BINARY_OP, "-");
-                    match(Tag.BINARY_OP);
+                Word word = new Word(Tag.BINARY_OP, currentWord.lexeme);
+                match(Tag.BINARY_OP);
+                Expression right = factor();
 
-                    Expression right = term();
-
-                    BinaryExpression binaryExpression = new BinaryExpression((NumberExpression) left, word, (NumberExpression) right);
-                    System.out.println(binaryExpression.evaluate());
-
-                    return binaryExpression;
-                } else {
-                    throw new UnSupportedOperatorException(String.format("Unexpected binary operator %s", currentWord.lexeme));
-                }
-            } else if (lookahead.getTag() == Tag.EOF) {
-                break;
-            } else  {
-                throw new InvalidExpression("Invalid expression, expected binary operator");
-            }
+                left = new BinaryExpression(left, word, right);
+                currentWord = (Word) lookahead;
         }
 
         return left;
     }
 
-    Expression term() {
+    Expression factor() throws UnSupportedOperatorException {
+        var left = parseExpression();
+        Word currentWord = (Word) lookahead;
+        while (currentWord.lexeme.equals("*")  || currentWord.lexeme.equals("/")) {
+
+            Word factorWord = new Word(Tag.BINARY_OP, currentWord.lexeme);
+            match(Tag.BINARY_OP);
+            Expression right = parseExpression();
+
+            left  = new BinaryExpression((NumberExpression) left, factorWord, (NumberExpression) right);
+            currentWord = (Word) lookahead;
+        }
+
+        return left;
+    }
+
+    Expression parseExpression() {
         if (lookahead.getTag() == Tag.NUM) {
             int value = ((Num) lookahead).value;
             match(Tag.NUM);

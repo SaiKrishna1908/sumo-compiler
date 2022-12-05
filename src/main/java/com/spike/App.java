@@ -11,6 +11,8 @@ import com.spike.lexer.Lexer;
 import com.spike.parser.Parser;
 import com.spike.parser.TokenNode;
 
+import javax.management.InvalidAttributeValueException;
+
 /**
  * Hello world!
  */
@@ -20,6 +22,11 @@ public class App {
     }
 
     public static void prettyPrintParseTree(TokenNode root, int offset) {
+
+        if (offset <= 0) {
+            System.out.println("offset cannot be less than or equal to 0");
+            return;
+        }
         String prefix = "\t".repeat(offset);
 
         if (offset == 1) {

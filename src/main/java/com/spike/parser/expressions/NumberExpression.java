@@ -26,7 +26,8 @@ public class NumberExpression extends Expression {
         return List.of();
     }
 
-    protected int getValue() {
+    @Override
+    public Integer evaluate() {
         return ((Num) this.token).value;
     }
 }

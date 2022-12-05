@@ -28,14 +28,9 @@ public enum Tag {
     // Some bad token
     BAD_TOKEN,
 
-    // Remove this to use BAD_TOKEN
-    OTHER,
-
     // EOF Token, maybe can be useful in future.
     EOF,
 
-    // Binary Operator (PLUE, MINUS)
+    // Binary Operator (PLUS, MINUS... etc)
     BINARY_OP,
-
-    BINARY_EXPRESSION,
 }
