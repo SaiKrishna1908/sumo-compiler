@@ -64,40 +64,57 @@ public class Parser {
         return term();
     }
 
-    Expression term() throws UnSupportedOperatorException {
-        var left = factor();
-        Word currentWord = (Word) lookahead;
-        while (currentWord.lexeme.equals("+")  || currentWord.lexeme.equals("-")) {
+    private Word tryParseNextWord() throws InvalidExpression {
+            try {
+                return  new Word( lookahead.getTag(), (String) lookahead.getValue());
+            } catch (ClassCastException classCastException) {
+                throw  new InvalidExpression(String.format("Expected word, got %s", lookahead.getClass()));
+            }
+    }
 
+    Expression term() throws InvalidExpression {
+        var left = factor();
+        Word currentWord = tryParseNextWord();
+
+        if (currentWord.getTag() != Tag.BINARY_OP && currentWord.getTag() != Tag.EOF) {
+            throw new InvalidExpression("Invalid expression, binary operator expected");
+        }
+
+        while (currentWord.lexeme.equals("+")  || currentWord.lexeme.equals("-")) {
 
                 Word word = new Word(Tag.BINARY_OP, currentWord.lexeme);
                 match(Tag.BINARY_OP);
                 Expression right = factor();
 
                 left = new BinaryExpression(left, word, right);
-                currentWord = (Word) lookahead;
+                currentWord = tryParseNextWord();
         }
 
         return left;
     }
 
-    Expression factor() throws UnSupportedOperatorException {
+    Expression factor() throws InvalidExpression {
         var left = parseExpression();
-        Word currentWord = (Word) lookahead;
+        Word currentWord = tryParseNextWord();
+
+        if (currentWord.getTag() != Tag.BINARY_OP && currentWord.getTag() != Tag.EOF) {
+            throw new InvalidExpression("Invalid expression, binary operator expected");
+        }
+
         while (currentWord.lexeme.equals("*")  || currentWord.lexeme.equals("/")) {
 
             Word factorWord = new Word(Tag.BINARY_OP, currentWord.lexeme);
             match(Tag.BINARY_OP);
             Expression right = parseExpression();
 
-            left  = new BinaryExpression((NumberExpression) left, factorWord, (NumberExpression) right);
-            currentWord = (Word) lookahead;
+            left  = new BinaryExpression(left, factorWord, right);
+            currentWord = tryParseNextWord();
         }
 
         return left;
     }
 
-    Expression parseExpression() {
+    Expression parseExpression() throws  InvalidExpression {
         if (lookahead.getTag() == Tag.NUM) {
             int value = ((Num) lookahead).value;
             match(Tag.NUM);
@@ -106,9 +123,11 @@ public class Parser {
             throw new Error("Syntax error");
     }
 
-    void match(Tag tag) {
+    void match(Tag tag) throws InvalidExpression {
         if (lookahead.getTag() == tag) {
             lookahead = lexer.scan();
+        } else {
+            throw new InvalidExpression(String.format("Expected %s Found %s", tag, lookahead.getTag()));
         }
     }
 }

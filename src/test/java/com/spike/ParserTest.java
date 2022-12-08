@@ -23,7 +23,7 @@ public class ParserTest {
         assert result == 3;
     }
 
-    @Test(expected = UnSupportedOperatorException.class)
+    @Test(expected = InvalidExpression.class)
     public void test_parser_unsupported_operator_exception() throws UnSupportedOperatorException, InvalidExpression {
         Lexer lex  = new Lexer("1 t 3");
         Parser parser = new Parser(lex);
@@ -61,7 +61,6 @@ public class ParserTest {
 
 
     @Test
-    @Ignore
     public void test_parser_with_multiple_operators_expression() throws UnSupportedOperatorException, InvalidExpression {
         Lexer lexer = new Lexer("3 + 2 * 2");
         Parser parser = new Parser(lexer);
