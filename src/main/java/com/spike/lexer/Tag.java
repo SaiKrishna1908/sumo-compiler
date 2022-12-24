@@ -32,5 +32,5 @@ public enum Tag {
     EOF,
 
     // Binary Operator (PLUS, MINUS... etc)
-    BINARY_OP,
+    OPERATOR,
 }

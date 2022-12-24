@@ -62,7 +62,7 @@ public class LexerTest {
         Lexer lexer = new Lexer(data);
         Word word = (Word) lexer.scan();
 
-        assert word.getTag() == Tag.BINARY_OP;
+        assert word.getTag() == Tag.OPERATOR;
         assert word.lexeme.equals("+");
     }
 
@@ -81,6 +81,17 @@ public class LexerTest {
         String data = "3 t 4";
         Lexer lexer = new Lexer(data);
         Token currentToken;
+        while ((currentToken = lexer.scan()).getTag() != Tag.EOF) {
+            System.out.println(currentToken);
+        }
+    }
+
+    @Test()
+    public void test_lexer_expression_with_unary_operator() {
+        String data = "-3";
+        Lexer lexer = new Lexer(data);
+        Token currentToken;
+
         while ((currentToken = lexer.scan()).getTag() != Tag.EOF) {
             System.out.println(currentToken);
         }

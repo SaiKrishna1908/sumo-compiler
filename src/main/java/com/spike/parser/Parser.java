@@ -1,18 +1,10 @@
 package com.spike.parser;
 
 import com.spike.exceptions.InvalidExpression;
-import com.spike.exceptions.ReadException;
-import com.spike.exceptions.UnSupportedOperatorException;
-import com.spike.lexer.Lexer;
-import com.spike.lexer.Num;
-import com.spike.lexer.Tag;
-import com.spike.lexer.Token;
-import com.spike.lexer.Word;
+import com.spike.lexer.*;
 import com.spike.parser.expressions.BinaryExpression;
 import com.spike.parser.expressions.Expression;
 import com.spike.parser.expressions.NumberExpression;
-
-import java.util.List;
 
 /*
  * A simple parser
@@ -59,7 +51,7 @@ public class Parser {
     /*
         Returning the root token node is optional and useful for printing the parsetree.
      */
-    public TokenNode parse() throws UnSupportedOperatorException, InvalidExpression {
+    public TokenNode parse() throws InvalidExpression {
 
         return term();
     }
@@ -76,14 +68,14 @@ public class Parser {
         var left = factor();
         Word currentWord = tryParseNextWord();
 
-        if (currentWord.getTag() != Tag.BINARY_OP && currentWord.getTag() != Tag.EOF) {
+        if (currentWord.getTag() != Tag.OPERATOR && currentWord.getTag() != Tag.EOF) {
             throw new InvalidExpression("Invalid expression, binary operator expected");
         }
 
         while (currentWord.lexeme.equals("+")  || currentWord.lexeme.equals("-")) {
 
-                Word word = new Word(Tag.BINARY_OP, currentWord.lexeme);
-                match(Tag.BINARY_OP);
+                Word word = new Word(Tag.OPERATOR, currentWord.lexeme);
+                match(Tag.OPERATOR);
                 Expression right = factor();
 
                 left = new BinaryExpression(left, word, right);
@@ -97,14 +89,14 @@ public class Parser {
         var left = parseExpression();
         Word currentWord = tryParseNextWord();
 
-        if (currentWord.getTag() != Tag.BINARY_OP && currentWord.getTag() != Tag.EOF) {
+        if (currentWord.getTag() != Tag.OPERATOR && currentWord.getTag() != Tag.EOF) {
             throw new InvalidExpression("Invalid expression, binary operator expected");
         }
 
         while (currentWord.lexeme.equals("*")  || currentWord.lexeme.equals("/")) {
 
-            Word factorWord = new Word(Tag.BINARY_OP, currentWord.lexeme);
-            match(Tag.BINARY_OP);
+            Word factorWord = new Word(Tag.OPERATOR, currentWord.lexeme);
+            match(Tag.OPERATOR);
             Expression right = parseExpression();
 
             left  = new BinaryExpression(left, factorWord, right);

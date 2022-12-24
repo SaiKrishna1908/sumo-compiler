@@ -98,16 +98,16 @@ public class Lexer {
                 return new Word(Tag.BAD_TOKEN, stringBuilder.toString());
             } else if (peek == '+' || peek == '-' || peek == '*' || peek == '/') {
                 currentPosition++;
-                return new Word(Tag.BINARY_OP, String.valueOf(peek));
+                return new Word(Tag.OPERATOR, String.valueOf(peek));
             } else {
                 currentPosition++;
                 Token t = new Token(Tag.BAD_TOKEN, "\0");
                 peek = ' ';
-//                return t;
+                return t;
             }
         }
 
-        return new Word(Tag.EOF,"\0");
+        return new Word(Tag.EOF, "\0");
     }
 
     private boolean isPartRelOp(char c) {
