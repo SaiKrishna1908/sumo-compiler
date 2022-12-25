@@ -52,8 +52,52 @@ public class Parser {
         Returning the root token node is optional and useful for printing the parsetree.
      */
     public TokenNode parse() throws InvalidExpression {
+        return parseWithPrecedence(0);
+    }
 
-        return term();
+    private Expression parseWithPrecedence(int parentPrecedance) throws  InvalidExpression {
+        var left = parseExpression();
+
+        while(true) {
+            var currentOperator = tryParseNextWord();
+            int precedence = getOperatorPrecedence(currentOperator);
+
+            if (precedence == 0 || precedence <= parentPrecedance) {
+                break;
+            }
+            
+            match(Tag.OPERATOR);
+            var right = parseWithPrecedence(precedence);
+
+            if (currentOperator.lexeme == "-") {
+                left = new BinaryExpression(right, currentOperator, left);
+            } else {
+                left = new BinaryExpression(left, currentOperator, right);
+            }            
+        }
+
+        return left;
+    }
+
+    private int getOperatorPrecedence(Word currentOperator) throws InvalidExpression {
+        if  (currentOperator.getTag() == Tag.OPERATOR) {
+            switch (currentOperator.lexeme) {
+                case "+":                    
+                case "-":
+                    return 2;
+                case "*":
+                case "/":
+                    return 3;
+                case "(":
+                    return 4;
+                default:
+                    return 0;
+            }
+        } else if (currentOperator.getTag() == Tag.EOF) {
+            return 0;
+        }
+
+        throw new InvalidExpression(String.format("Invalid expression, expected operator got %s", currentOperator.getClass()));
     }
 
     private Word tryParseNextWord() throws InvalidExpression {
@@ -62,48 +106,6 @@ public class Parser {
             } catch (ClassCastException classCastException) {
                 throw  new InvalidExpression(String.format("Expected word, got %s", lookahead.getClass()));
             }
-    }
-
-    Expression term() throws InvalidExpression {
-        var left = factor();
-        Word currentWord = tryParseNextWord();
-
-        if (currentWord.getTag() != Tag.OPERATOR && currentWord.getTag() != Tag.EOF) {
-            throw new InvalidExpression("Invalid expression, binary operator expected");
-        }
-
-        while (currentWord.lexeme.equals("+")  || currentWord.lexeme.equals("-")) {
-
-                Word word = new Word(Tag.OPERATOR, currentWord.lexeme);
-                match(Tag.OPERATOR);
-                Expression right = factor();
-
-                left = new BinaryExpression(left, word, right);
-                currentWord = tryParseNextWord();
-        }
-
-        return left;
-    }
-
-    Expression factor() throws InvalidExpression {
-        var left = parseExpression();
-        Word currentWord = tryParseNextWord();
-
-        if (currentWord.getTag() != Tag.OPERATOR && currentWord.getTag() != Tag.EOF) {
-            throw new InvalidExpression("Invalid expression, binary operator expected");
-        }
-
-        while (currentWord.lexeme.equals("*")  || currentWord.lexeme.equals("/")) {
-
-            Word factorWord = new Word(Tag.OPERATOR, currentWord.lexeme);
-            match(Tag.OPERATOR);
-            Expression right = parseExpression();
-
-            left  = new BinaryExpression(left, factorWord, right);
-            currentWord = tryParseNextWord();
-        }
-
-        return left;
     }
 
     Expression parseExpression() throws  InvalidExpression {

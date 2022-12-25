@@ -1,15 +1,13 @@
 package com.spike.parser.expressions;
 
 import com.spike.lexer.Num;
-import com.spike.lexer.Tag;
 import com.spike.lexer.Token;
 import com.spike.parser.TokenNode;
 
 import java.util.List;
 
 public class NumberExpression extends Expression {
-
-    private final Tag tag = Tag.NUM;
+    
     private final Token token;
 
     public NumberExpression(int value) {

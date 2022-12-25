@@ -4,7 +4,6 @@
 ## Compile the program
 
 ```
-    mvn clean install
     mvn compile
 ```
 

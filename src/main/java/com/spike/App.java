@@ -1,24 +1,46 @@
 package com.spike;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Objects;
+import java.util.Scanner;
 
 import com.spike.exceptions.InvalidExpression;
 import com.spike.exceptions.UnSupportedOperatorException;
 import com.spike.lexer.Lexer;
 import com.spike.parser.Parser;
 import com.spike.parser.TokenNode;
-
-import javax.management.InvalidAttributeValueException;
+import com.spike.utils.CompilerUtils;
 
 /**
  * Hello world!
  */
 public class App {
     public static void main(String[] args) throws IOException, UnSupportedOperatorException, InvalidExpression {
+        String input = null;
+        Scanner scan = new Scanner(System.in);
+
+        boolean debugMode = false;
         
+        while((input =  scan.nextLine()) != null && !input.isEmpty()) {
+            if (input.equalsIgnoreCase("#debug")) {
+                debugMode = true;
+                continue;
+            }
+            Lexer lex = new Lexer(input);
+            var parser = new Parser(lex);
+
+            var rootNode =  parser.parse();
+
+            var result = CompilerUtils.evaluateParseTree(rootNode);
+
+            System.out.println(result);
+
+            if (debugMode) {
+                prettyPrintParseTree(rootNode, 1);
+            }
+            
+        }
+
+        scan.close();
     }
 
     public static void prettyPrintParseTree(TokenNode root, int offset) {

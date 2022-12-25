@@ -1,7 +1,6 @@
 package com.spike.parser.expressions;
 
 import com.spike.exceptions.UnSupportedOperatorException;
-import com.spike.lexer.Tag;
 import com.spike.lexer.Token;
 import com.spike.lexer.Word;
 import com.spike.parser.TokenNode;
@@ -32,8 +31,9 @@ public class BinaryExpression extends Expression {
 
     @Override
     public Integer evaluate() throws UnSupportedOperatorException {
-        Integer leftValue = (Integer) left.evaluate();
+        Integer leftValue = (Integer) left.evaluate();        
         Integer rightValue  = (Integer) right.evaluate();
+        
 
         String operator = ((Word) this.operator).lexeme;
         switch (operator) {

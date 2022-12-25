@@ -1,17 +1,13 @@
 package com.spike.symbols;
 
-import java.util.Hashtable;
-
 /*
     Env is the collection of symbol tables
 
  */
-public class Env {
-    private Hashtable<String, String> hashtable;
+public class Env {    
     protected Env prev;
 
-    public Env(Env prevEnv) {
-        hashtable = new Hashtable<>();
+    public Env(Env prevEnv) {        
         prev = prevEnv;
     }
 
